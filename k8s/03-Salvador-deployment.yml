@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salvador-deployment
+  namespace: salvador
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salvador
+  template:
+    metadata:
+      labels:
+        app: salvador
+    spec:
+      containers:
+        - name: salvador
+          image: salvaqc/salvador-demo:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_R2DBC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: salvador-configmap
+                  key: db-url
+            - name: SPRING_R2DBC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: salvador-secret
+                  key: db-username
+            - name: SPRING_R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: salvador-secret
+                  key: db-password
